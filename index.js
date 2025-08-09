@@ -11,9 +11,6 @@ const {
 } = require("./utils/extractText");
 const { OpenAI } = require("openai");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-console.log("process.env.OPENAI_API_KEY", process.env.OPENAI_API_KEY);
-
 const app = express();
 const upload = multer({ dest: "uploads/" });
 
@@ -24,12 +21,10 @@ let documentChunks = [];
 let documentEmbeddings = [];
 
 app.post("/upload", upload.single("pdf"), async (req, res) => {
-  console.log("test");
   const dataBuffer =
     req.file.buffer || require("fs").readFileSync(req.file.path);
   const pdfData = await pdfParse(dataBuffer);
   const rawText = pdfData.text;
-  console.log("rawText", rawText);
 
   // Chunk and embed
   const { chunks, embeddings } = await getEmbeddings(rawText);
@@ -46,8 +41,6 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
 
 app.post("/ask", async (req, res) => {
   const { key } = req.body; // key
-
-  console.log("key", key);
 
   const questionEmbedding = await getQuestionEmbedding(key);
 

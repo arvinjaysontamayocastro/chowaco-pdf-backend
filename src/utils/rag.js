@@ -2,7 +2,6 @@ const { OpenAI } = require("openai");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const chunkText = (text, maxLength = 500) => {
-  // console.log("text.length", text.length);
   const paragraphs = text.split(/\n\n+/);
   const chunks = [];
 
@@ -23,9 +22,6 @@ const chunkText = (text, maxLength = 500) => {
 const getEmbeddings = async (text) => {
   const chunks = chunkText(text);
   const embeddings = [];
-
-  // console.log("process.env.OPENAI_API_KEY ", process.env.OPENAI_API_KEY);
-  // console.log(JSON.stringify(chunks));
   for (const chunk of chunks) {
     const response = await openai.embeddings.create({
       model: "text-embedding-3-small",
@@ -64,8 +60,6 @@ const searchChunks = (
 };
 
 const askGPT = async (question, context) => {
-  // console.log("askGPT");
-  // console.log(question);
   const prompt = `
 Populate using the interface and comments, then return result in valid JSON only, remove all backticks and invalid json characters from values
 

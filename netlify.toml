@@ -1,6 +1,9 @@
 [build]
-  functions = "netlify/functions"
-  node_bundler = "esbuild"
+  command = ""
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
 
 [[redirects]]
   from = "/*"

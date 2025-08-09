@@ -34,6 +34,7 @@ create table documents (
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_SERVICE_KEY=your-service-role-key
 OPENAI_API_KEY=sk-...
+AI_MODEL=gpt-4.1...
 ```
 
 4. Run locally (Express)

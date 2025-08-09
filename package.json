@@ -1,24 +1,18 @@
 {
-  "name": "backend",
+  "name": "chowaco-pdf-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "dev": "netlify dev"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "multer": "^2.0.2",
-    "openai": "^5.12.0",
-    "pdf-parse": "^1.1.1"
+    "express": "^4.18.2",
+    "serverless-http": "^3.0.0",
+    "@supabase/supabase-js": "^2.0.0",
+    "multer": "^1.4.5",
+    "pdf-parse": "^1.1.1",
+    "openai": "^4.0.0",
+    "cors": "^2.8.5"
   }
 }

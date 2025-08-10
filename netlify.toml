@@ -1,11 +1,18 @@
 [build]
-  command = ""
-  publish = "public"
+  command = ""               # No build step required
+  publish = ""               # No publish directory needed
+  functions = "netlify/functions"  # Location of your serverless functions
+  node_bundler = "esbuild"
 
-[functions]
-  directory = "netlify/functions"
+[build.environment]
+  FRONTEND_ORIGIN = "http://localhost:3000"
 
 [[redirects]]
   from = "/*"
   to = "/.netlify/functions/api"
   status = 200
+
+
+[functions]
+  external_node_modules = ["express", "@supabase/supabase-js", "multer", "pdf-parse", "openai", "cors", "dotenv"]
+  node_bundler = "esbuild"

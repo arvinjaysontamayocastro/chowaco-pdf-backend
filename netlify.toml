@@ -1,8 +1,9 @@
 [build]
   command = ""
-  publish = "public"
+  
 [build.environment]
   FRONTEND_ORIGIN = "https://chowacopdf.netlify.app"
+  
 [functions]
   directory = "netlify/functions"
 

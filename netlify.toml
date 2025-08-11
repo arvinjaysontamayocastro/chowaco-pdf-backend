@@ -4,9 +4,12 @@
   functions = "netlify/functions"  # Location of your serverless functions
   node_bundler = "esbuild"
 
+[build.environment]
+  FRONTEND_ORIGIN = "http://localhost:3000"
+
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/api/:splat"
+  to = "/.netlify/functions/api"
   status = 200
 
 

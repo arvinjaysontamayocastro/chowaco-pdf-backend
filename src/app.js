@@ -46,8 +46,6 @@ app.use(
 
 app.use(express.json());
 
-// Allow OPTIONS preflight for all routes
-app.options('*', cors());
 app.post('/upload', upload.single('pdf'), uploadController);
 app.post('/ask', askController);
 app.delete('/documents/:guid', deleteController);

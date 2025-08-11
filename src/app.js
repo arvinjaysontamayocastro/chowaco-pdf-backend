@@ -16,6 +16,54 @@ const upload = multer({
 
 const app = express();
 
+// // Debug logger to verify body parsing
+// app.use((req, res, next) => {
+//   console.log('---- Incoming request ----');
+//   console.log('Method:', req.method);
+//   console.log('URL:', req.originalUrl);
+//   console.log('Headers:', req.headers);
+//   console.log('Body:', req.body);
+//   console.log('--------------------------');
+//   next();
+// });
+
+// // Log the type of incoming body in dev mode
+// if (process.env.NODE_ENV !== 'production') {
+//   app.use((req, res, next) => {
+//     if (Buffer.isBuffer(req.body)) {
+//       console.log(
+//         `[BodyLogger] Incoming body is a Buffer (${req.body.length} bytes)`
+//       );
+//     } else if (typeof req.body === 'object' && req.body !== null) {
+//       console.log(`[BodyLogger] Incoming body is a parsed object:`, req.body);
+//     } else if (typeof req.body === 'string') {
+//       console.log(`[BodyLogger] Incoming body is a string:`, req.body);
+//     } else if (req.body == null) {
+//       console.log(`[BodyLogger] Incoming body is null/undefined`);
+//     } else {
+//       console.log(
+//         `[BodyLogger] Incoming body type:`,
+//         typeof req.body,
+//         req.body
+//       );
+//     }
+//     next();
+//   });
+// }
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      req.body = JSON.parse(req.body.toString('utf8'));
+    } catch (err) {
+      console.error('Failed to parse Buffer body:', err);
+    }
+  }
+  next();
+});
+
 // Allowed origins only from env var
 const allowedOrigins = process.env.FRONTEND_ORIGIN
   ? process.env.FRONTEND_ORIGIN.split(',').map((o) => o.trim())
@@ -44,10 +92,8 @@ app.use(
   })
 );
 
-app.use(express.json());
-
-app.post('/upload', upload.single('pdf'), uploadController);
-app.post('/ask', askController);
-app.delete('/documents/:guid', deleteController);
+app.post('/api/upload', upload.single('pdf'), uploadController);
+app.post('/api/ask', askController);
+app.delete('/api/documents/:guid', deleteController);
 
 module.exports = app;

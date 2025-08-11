@@ -11,5 +11,5 @@ app.use(express.json());
 app.delete('/:guid', deleteController);
 
 module.exports.handler = serverless(app, {
-  basePath: '/.netlify/functions/upload',
+  basePath: '/.netlify/functions/delete',
 });

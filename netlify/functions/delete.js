@@ -10,4 +10,6 @@ app.use(express.json());
 // The original route was DELETE /documents/:guid; we'll accept DELETE with path param forwarded to express
 app.delete('/:guid', deleteController);
 
-module.exports.handler = serverless(app);
+module.exports.handler = serverless(app, {
+  basePath: '/.netlify/functions/upload',
+});

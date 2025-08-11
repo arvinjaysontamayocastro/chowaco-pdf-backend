@@ -6,8 +6,13 @@ const uploadController = require('../../src/controllers/uploadController');
 
 const app = express();
 app.use(corsMiddleware);
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 100 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
 
 app.post('/', upload.single('pdf'), uploadController);
 
-module.exports.handler = serverless(app);
+module.exports.handler = serverless(app, {
+  basePath: '/.netlify/functions/upload',
+});

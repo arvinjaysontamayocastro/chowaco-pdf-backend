@@ -9,4 +9,6 @@ app.use(express.json());
 
 app.post('/', askController);
 
-module.exports.handler = serverless(app);
+module.exports.handler = serverless(app, {
+  basePath: '/.netlify/functions/upload',
+});

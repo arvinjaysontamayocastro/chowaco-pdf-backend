@@ -3,7 +3,7 @@
   node_bundler = "esbuild"
 
 [build.environment]
-  FRONTEND_ORIGIN = "http://localhost:3000"
+  FRONTEND_ORIGIN = "https://chowacopdf.netlify.app"
 
 [functions]
   external_node_modules = ["express", "serverless-http", "multer", "@supabase/supabase-js", "pdf-parse", "openai", "cors", "dotenv"]

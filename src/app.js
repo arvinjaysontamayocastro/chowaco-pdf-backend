@@ -1,13 +1,13 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const express = require("express");
-const multer = require("multer");
+const express = require('express');
+const multer = require('multer');
 
-const cors = require("cors");
+const cors = require('cors');
 
-const uploadController = require("./controllers/uploadController");
-const askController = require("./controllers/askController");
-const deleteController = require("./controllers/deleteController");
+const uploadController = require('./controllers/uploadController');
+const askController = require('./controllers/askController');
+const deleteController = require('./controllers/deleteController');
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -18,7 +18,7 @@ const app = express();
 
 // Allowed origins only from env var
 const allowedOrigins = process.env.FRONTEND_ORIGIN
-  ? process.env.FRONTEND_ORIGIN.split(",").map((o) => o.trim())
+  ? process.env.FRONTEND_ORIGIN.split(',').map((o) => o.trim())
   : null; // null means block all if not set
 
 // Custom CORS logic to allow multiple origins
@@ -28,7 +28,7 @@ app.use(
       if (!allowedOrigins) {
         // No FRONTEND_ORIGIN in env → block all
         return callback(
-          new Error("CORS: No allowed origins set in env"),
+          new Error('CORS: No allowed origins set in env'),
           false
         );
       }
@@ -39,15 +39,17 @@ app.use(
         callback(new Error(`CORS: Origin ${origin} not allowed`), false);
       }
     },
-    methods: ["GET", "POST", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
 app.use(express.json());
 
-app.post("/upload", upload.single("pdf"), uploadController);
-app.post("/ask", askController);
-app.delete("/documents/:guid", deleteController);
+// Allow OPTIONS preflight for all routes
+app.options('*', cors());
+app.post('/upload', upload.single('pdf'), uploadController);
+app.post('/ask', askController);
+app.delete('/documents/:guid', deleteController);
 
 module.exports = app;

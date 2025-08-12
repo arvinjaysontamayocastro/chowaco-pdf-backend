@@ -1,17 +1,21 @@
-const pdfParse = require("pdf-parse");
-const { generateEmbeddings } = require("./embeddingService");
-const store = require("../adapters/documentStore");
+const pdfParse = require('pdf-parse');
+const { generateEmbeddings } = require('./embeddingService');
+const store = require('../adapters/documentStore');
 const {
   getQuestionEmbedding,
   questionQueries,
-} = require("../utils/extractText");
-const { searchChunks, askGPT } = require("../utils/rag");
-const { parsePDF } = require("../utils/pdfUtils");
+} = require('../utils/extractText');
+const { searchChunks, askGPT } = require('../utils/rag');
+const { parsePDF } = require('../utils/pdfUtils');
 
 async function processPDFAndStore(guid, pdfBuffer) {
   const text = await parsePDF(pdfBuffer);
 
   const { chunks, embeddings } = await generateEmbeddings(text);
+
+  console.log('guid', guid);
+  console.log('chunks', chunks);
+  console.log('embeddings', embeddings);
 
   await store.saveDocument(guid, chunks, embeddings);
 
@@ -20,7 +24,7 @@ async function processPDFAndStore(guid, pdfBuffer) {
 
 async function getAnswerForGuid(guid, key) {
   const doc = await store.getDocument(guid);
-  if (!doc) throw new Error("Document not found");
+  if (!doc) throw new Error('Document not found');
   const chunks = doc.chunks;
   const embeddings = doc.embeddings;
   const questionEmbedding = await getQuestionEmbedding(key);

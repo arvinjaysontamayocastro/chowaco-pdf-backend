@@ -2,6 +2,8 @@ const documentService = require('../services/documentService');
 module.exports = async (req, res) => {
   try {
     const { guid, key } = req.body;
+    console.log('guid', guid);
+    console.log('key', key);
     if (!guid || !key)
       return res.status(400).json({ error: 'guid and key are required' });
 

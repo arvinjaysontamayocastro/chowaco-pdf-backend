@@ -2,7 +2,7 @@
   command = ""
   
 [build.environment]
-  FRONTEND_ORIGIN = "https://chowacopdf.netlify.app"
+  FRONTEND_ORIGIN = "http://localhost:3000"
   
 [functions]
   directory = "netlify/functions"

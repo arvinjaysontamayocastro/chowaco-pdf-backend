@@ -26,6 +26,13 @@ create table documents (
   chunks jsonb,
   embeddings jsonb
 );
+create table if not exists question_embeddings (
+  key text not null,
+  model text not null,
+  embedding jsonb not null,   -- store as JSON array of numbers; no pgvector requirement
+  updated_at timestamptz not null default now(),
+  primary key (key, model)
+);
 ```
 
 3. Add environment variables (local `.env` or Netlify environment variables):

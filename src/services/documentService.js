@@ -29,7 +29,7 @@ async function getAnswerForGuid(guid, key) {
   const embeddings = doc.embeddings;
   const questionEmbedding = await getQuestionEmbedding(key);
   const topChunks = searchChunks(questionEmbedding, embeddings, chunks);
-  const answer = await askGPT(questionQueries[key], topChunks);
+  const answer = await askGPT(questionQueries[key], topChunks, key);
   return answer;
 }
 

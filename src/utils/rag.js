@@ -1,35 +1,6 @@
 const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
-// // ADD (top): small helper
-function coerceStrictJSON(str, key) {
-  try {
-    const j = JSON.parse(str);
-    // normalize common mistakes like "goal" -> "goals"
-    const map = { goal: 'goals', bmp: 'bmps', pollutant: 'pollutants' };
-    if (!j[key]) {
-      for (const k of Object.keys(map)) {
-        if (j[k]) {
-          j[map[k]] = j[k];
-          delete j[k];
-        }
-      }
-    }
-    // ensure right shape
-    return JSON.stringify({ [key]: j[key] ?? [] });
-  } catch {
-    // naive brace slice fallback
-    const s = str.indexOf('{');
-    const e = str.lastIndexOf('}');
-    if (s >= 0 && e > s) {
-      try {
-        const j = JSON.parse(str.slice(s, e + 1));
-        return JSON.stringify({ [key]: j[key] ?? j?.[key.slice(0, -1)] ?? [] });
-      } catch {}
-    }
-    return JSON.stringify({ [key]: [] });
-  }
-}
+const { coerceStrictJSON } = require('../helpers/jsonCoerce');
 
 const chunkText = (text, maxLength = 500) => {
   const paragraphs = text.split(/\n\n+/);
@@ -89,31 +60,30 @@ const searchChunks = (
   return similarities.slice(0, topK).map((s) => documentChunks[s.index]);
 };
 
-async function askGPT(question, context, key) {
+async function askGPT(question, context, canonicalKey) {
   const prompt = `
-You are extracting data for the "${key}" section from a watershed plan.
+You are extracting data for the "${canonicalKey}" section from a watershed plan.
 Return ONLY strict JSON, with this exact top-level shape:
 
-{ "${key}": <array or object exactly as required by the spec> }
+{ "${canonicalKey}": <array or object exactly as required by the spec> }
 
 No explanations, no markdown, no comments.
 
 Context:
-${context.join('\n\n')}
+${Array.isArray(context) ? context.join('\n\n') : String(context)}
 
 Question:
-${question}
+${String(question)}
   `.trim();
 
   const chat = await openai.chat.completions.create({
-    model: process.env.AI_MODEL, // e.g. "gpt-4.1"
+    model: process.env.AI_MODEL, // e.g. "gpt-4.1" or your local model
     messages: [{ role: 'user', content: prompt }],
     temperature: 0,
   });
 
   const raw = chat.choices?.[0]?.message?.content ?? '';
-  // Coerce to the exact JSON shape the UI expects
-  return coerceStrictJSON(raw, key);
+  return coerceStrictJSON(raw, canonicalKey);
 }
 
 module.exports = { getEmbeddings, searchChunks, askGPT };

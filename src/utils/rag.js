@@ -1,6 +1,6 @@
 const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const { coerceStrictJSON } = require('../helpers/jsonCoerce');
+const { askWithRetry } = require('./llm'); // ///////////////////////////// ADDED
 
 const chunkText = (text, maxLength = 500) => {
   const paragraphs = text.split(/\n\n+/);
@@ -60,30 +60,9 @@ const searchChunks = (
   return similarities.slice(0, topK).map((s) => documentChunks[s.index]);
 };
 
-async function askGPT(question, context, canonicalKey) {
-  const prompt = `
-You are extracting data for the "${canonicalKey}" section from a watershed plan.
-Return ONLY strict JSON, with this exact top-level shape:
-
-{ "${canonicalKey}": <array or object exactly as required by the spec> }
-
-No explanations, no markdown, no comments.
-
-Context:
-${Array.isArray(context) ? context.join('\n\n') : String(context)}
-
-Question:
-${String(question)}
-  `.trim();
-
-  const chat = await openai.chat.completions.create({
-    model: process.env.AI_MODEL, // e.g. "gpt-4.1" or your local model
-    messages: [{ role: 'user', content: prompt }],
-    temperature: 0,
-  });
-
-  const raw = chat.choices?.[0]?.message?.content ?? '';
-  return coerceStrictJSON(raw, canonicalKey);
-}
+// Replace your askGPT function with this:
+const askGPT = async (question, context, canonicalKey) => {
+  return askWithRetry({ canonicalKey, question, context });
+};
 
 module.exports = { getEmbeddings, searchChunks, askGPT };

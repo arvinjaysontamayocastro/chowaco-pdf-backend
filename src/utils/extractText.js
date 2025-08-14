@@ -15,9 +15,9 @@ let questionsEmbed = {
 
   goals: '',
   bmps: '',
-  implementation: '',
-  monitoring: '',
-  outreach: '',
+  implementationActivities: '',
+  monitoringMetrics: '',
+  outreachActivities: '',
   geographicAreas: '',
   // summary: '', // this will be computed in the code instead
 };
@@ -84,8 +84,8 @@ let questionQueries = {
     '}\n\n' +
     ' Rules: Prioritize the official cost/practices table. Do not invent quantities. Add _citations per item.',
 
-  implementation:
-    ' implementation: ImplementationActivity[]; // Planned actions & timing; often in an implementation schedule table.\n\n' +
+  implementationActivities:
+    ' implementationActivities: ImplementationActivity[]; // Planned actions & timing; often in an implementation schedule table.\n\n' +
     ' interface ImplementationActivity {\n\n' +
     '  id: number; // Row index if no explicit ID \n\n' +
     '  description: string; // Plain action description \n\n' +
@@ -98,8 +98,8 @@ let questionQueries = {
     '}\n\n' +
     ' Notes: Prefer schedule tables. Keep date text as shown. Add _citations per item.',
 
-  monitoring:
-    ' monitoring: MonitoringMetric[]; // Parameters, thresholds/criteria, frequency, and methods. Look for monitoring tables/sections.\n\n' +
+  monitoringMetrics:
+    ' monitoringMetrics: MonitoringMetric[]; // Parameters, thresholds/criteria, frequency, and methods. Look for monitoring metrics table monitoring tables/sections.\n\n' +
     ' interface MonitoringMetric {\n\n' +
     "  parameter: string; // e.g., 'TSS', 'DO', 'Turbidity', 'E. coli', 'TN', 'TP' \n\n" +
     '  threshold: string; // Numeric or narrative criterion exactly as stated \n\n' +
@@ -112,8 +112,8 @@ let questionQueries = {
     '}\n\n' +
     ' Rules: Keep units; when not clearly numeric, keep values as strings in threshold. Add _citations per item.',
 
-  outreach:
-    ' outreach: OutreachActivity[]; // Outreach/education actions. Often a separate table or bullets.\n\n' +
+  outreachActivities:
+    ' outreachActivities: OutreachActivity[]; // Outreach/education actions. Often a separate table or bullets.\n\n' +
     ' interface OutreachActivity {\n\n' +
     '  id: number; // Row index if no explicit ID \n\n' +
     '  description: string; // Outreach description \n\n' +

@@ -18,9 +18,9 @@ const ARRAY_KEYS = new Set([
   'pollutants',
   'goals',
   'bmps',
-  'implementation',
-  'monitoring',
-  'outreach',
+  'implementationActivities',
+  'monitoringMetrics',
+  'outreachActivities',
   'geographicAreas',
 ]);
 

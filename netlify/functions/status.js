@@ -1,7 +1,7 @@
 // netlify/functions/status.js
 // Purpose: fast status polling endpoint.
 
-const { getJob } = require('../lib/jobs');
+const { getJob } = require('.../lib/jobs');
 
 exports.handler = async (event) => {
   try {
@@ -10,15 +10,16 @@ exports.handler = async (event) => {
     if (!guid) return { statusCode: 400, body: 'Missing guid' };
 
     const job = await getJob(guid);
-    if (!job) return { statusCode: 404, body: JSON.stringify({ status: 'missing' }) };
+    if (!job)
+      return { statusCode: 404, body: JSON.stringify({ status: 'missing' }) };
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         status: job.status,
         progress: job.progress,
-        error: job.error || null
-      })
+        error: job.error || null,
+      }),
     };
   } catch (e) {
     return { statusCode: 500, body: String(e) };

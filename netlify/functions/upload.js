@@ -10,7 +10,8 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  const contentType = event.headers['content-type'] || event.headers['Content-Type'] || '';
+  const contentType =
+    event.headers['content-type'] || event.headers['Content-Type'] || '';
   if (!contentType.startsWith('multipart/form-data')) {
     return { statusCode: 400, body: 'Expected multipart/form-data' };
   }
@@ -21,12 +22,18 @@ exports.handler = async (event) => {
     const files = [];
 
     await new Promise((resolve, reject) => {
-      bb.on('field', (name, val) => { fields[name] = val; });
+      bb.on('field', (name, val) => {
+        fields[name] = val;
+      });
       bb.on('file', (name, file, info) => {
         const chunks = [];
         file.on('data', (d) => chunks.push(d));
         file.on('end', () => {
-          files.push({ name: info.filename, mime: info.mimeType, buffer: Buffer.concat(chunks) });
+          files.push({
+            name: info.filename,
+            mime: info.mimeType,
+            buffer: Buffer.concat(chunks),
+          });
         });
       });
       bb.on('close', resolve);
@@ -36,7 +43,9 @@ exports.handler = async (event) => {
 
     const guid = fields.guid;
     if (!guid) return { statusCode: 400, body: 'Missing guid' };
-    const pdf = files.find(f => f.name && f.name.toLowerCase().endsWith('.pdf'));
+    const pdf = files.find(
+      (f) => f.name && f.name.toLowerCase().endsWith('.pdf')
+    );
     if (!pdf) return { statusCode: 400, body: 'Missing PDF file' };
 
     // Store file (stub -> writes to tmp path). Replace with S3/Supabase
@@ -47,7 +56,7 @@ exports.handler = async (event) => {
       status: 'queued',
       progress: 0,
       file_url: fileUrl,
-      error: null
+      error: null,
     });
 
     // Fire & forget background job
@@ -55,7 +64,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ guid })
+      body: JSON.stringify({ guid }),
     };
   } catch (e) {
     return { statusCode: 500, body: `Upload error: ${e.message || e}` };

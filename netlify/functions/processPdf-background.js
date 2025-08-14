@@ -1,8 +1,8 @@
 // netlify/functions/processPdf-background.js
 // Purpose: long-running worker (≤ 15 min). Update job progress as you go.
 
-const { getJob, updateJob } = require('../lib/jobs');
 const { simulatePipeline } = require('../lib/pipeline');
+const { getJob, updateJob } = require('../lib/jobs');
 
 exports.handler = async (event) => {
   try {
@@ -22,8 +22,13 @@ exports.handler = async (event) => {
   } catch (e) {
     // best-effort guid recovery
     let guid = null;
-    try { guid = JSON.parse(event.body || '{}').guid; } catch {}
+    try {
+      guid = JSON.parse(event.body || '{}').guid;
+    } catch {}
     if (guid) await updateJob(guid, { status: 'error', error: String(e) });
-    return { statusCode: 200, body: JSON.stringify({ ok: false, error: String(e) }) };
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ ok: false, error: String(e) }),
+    };
   }
 };

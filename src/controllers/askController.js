@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     );
     console.log('key', key);
     console.log('Answer:', answer);
-    return res.json({ answer });
+    return res.json(answer);
   } catch (err) {
     console.error('Ask error:', err);
     return res

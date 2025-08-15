@@ -29,8 +29,10 @@ async function getAnswerForGuid(guid, key) {
   const embeddings = doc.embeddings;
   const questionEmbedding = await getQuestionEmbedding(key);
   const topChunks = searchChunks(questionEmbedding, embeddings, chunks);
+  // Build sources with index + snippet
+  const sources = topChunks.map((t) => ({ snippet: t.slice(0, 400), index: chunks.indexOf(t) }));
   const answer = await askGPT(questionQueries[key], topChunks, key);
-  return answer;
+  return { answer, sources };
 }
 
 async function deleteDocumentsByGuid(guid) {

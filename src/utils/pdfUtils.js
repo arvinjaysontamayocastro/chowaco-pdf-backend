@@ -1,16 +1,30 @@
 const pdfParse = require('pdf-parse');
+const { ocrPdfBuffer } = require('./ocr');
 
 /**
  * Parse PDF and return normalized text + lightweight layout hints.
- * NOTE: For OCR of scanned PDFs, integrate tesseract or a rasterizer; here we flag low text density.
+ * If text is sparse and OCR is enabled, attempt OCR for first N pages.
  */
 async function parsePDF(input) {
   if (!Buffer.isBuffer(input)) {
     throw new Error('parsePDF expects a Buffer (got non-buffer).');
   }
   const data = await pdfParse(input);
-  const raw = data.text || "";
+  let raw = data.text || "";
   const numpages = data.numpages || 0;
+
+  // If very little text and OCR enabled, try OCR to recover text
+  const tooSparse = raw.trim().length < 200 && numpages > 0;
+  if (tooSparse) {
+    try {
+      const { text: ocrText } = await ocrPdfBuffer(input, { firstNPages: Math.min(numpages, 10) });
+      if (ocrText && ocrText.trim().length > raw.length) {
+        raw = ocrText;
+      }
+    } catch (e) {
+      // best effort only
+    }
+  }
 
   // Split into lines and paragraphs
   const lines = raw.split(/\r?\n/).map(s => s.trim());
@@ -48,9 +62,7 @@ async function parsePDF(input) {
     paraMeta.push({ index: idx, isHeading, isBullet, isTable });
   });
 
-  // Flag for potential OCR need
-  const needsOCR = raw.trim().length < 200 && numpages > 0;
-
+  // Return enriched parse
   return {
     text: raw,
     numpages,
@@ -59,7 +71,7 @@ async function parsePDF(input) {
     headings,
     bullets,
     tables,
-    needsOCR,
+    needsOCR: tooSparse,
   };
 }
 

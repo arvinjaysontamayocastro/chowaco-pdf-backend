@@ -9,6 +9,8 @@ const uploadController = require('./controllers/uploadController');
 const askController = require('./controllers/askController');
 const deleteController = require('./controllers/deleteController');
 
+// const validate = require('./middleware/validate');
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB

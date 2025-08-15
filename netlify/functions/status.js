@@ -1,7 +1,7 @@
 // netlify/functions/status.js
 // Purpose: fast status polling endpoint.
 
-const { getJob } = require('.../lib/jobs');
+const { getJob } = require('../lib/jobs');
 
 exports.handler = async (event) => {
   try {

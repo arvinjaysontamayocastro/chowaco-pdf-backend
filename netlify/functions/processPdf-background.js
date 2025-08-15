@@ -2,7 +2,7 @@
 // Purpose: long-running worker (≤ 15 min). Update job progress as you go.
 
 const { simulatePipeline } = require('../lib/pipeline');
-const { getJob, updateJob } = require('.../lib/jobs');
+const { getJob, updateJob } = require('../lib/jobs');
 
 exports.handler = async (event) => {
   try {

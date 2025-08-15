@@ -2,6 +2,8 @@ const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const { askWithRetry } = require('./llm'); // ///////////////////////////// ADDED
 
+// REPLACED: use chunkWithOverlap from ./chunker
+const { chunkWithOverlap } = require('../utils/chunker');
 const chunkText = (text, maxLength = 500) => {
   const paragraphs = text.split(/\n\n+/);
   const chunks = [];

@@ -3,7 +3,11 @@
 // Notes: Replace storage stubs with S3/Supabase in production.
 
 const busboy = require('busboy');
-const { insertJob, triggerBackground, writeFileTemp } = require('../lib/jobs');
+const {
+  insertJob,
+  triggerBackground,
+  writeFileTemp,
+} = require('../../lib/jobs');
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {

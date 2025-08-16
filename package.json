@@ -5,7 +5,8 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "dev": "netlify dev"
+    "dev": "netlify dev",
+    "accuracy": "node scripts/accuracy.js ./samples"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.0.0",
@@ -17,6 +18,7 @@
     "pdf-parse": "^1.1.1",
     "pdf2pic": "^3.2.0",
     "serverless-http": "^3.0.0",
-    "tesseract.js": "^6.0.1"
+    "tesseract.js": "^6.0.1",
+    "zod": "^3.23.8"
   }
 }

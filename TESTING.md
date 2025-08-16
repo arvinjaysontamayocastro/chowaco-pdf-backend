@@ -14,3 +14,8 @@
 3. Report summary accuracy and error cases.
 
 _Note: script stub to be added in `/scripts/accuracy.js`._
+
+
+## OCR Fallback Scenario
+Set `OCR_ENABLED=true` and optionally `OCR_MIN_TEXT=500` to enable OCR for scanned PDFs. 
+Add at least one scanned sample in `samples/` and verify that `npm run accuracy` prints higher F1 for OCR-heavy documents.

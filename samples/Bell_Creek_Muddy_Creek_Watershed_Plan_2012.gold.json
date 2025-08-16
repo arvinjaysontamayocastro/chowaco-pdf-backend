@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "title": "Bell Creek / Muddy Creek Watershed Plan",
+    "description": "Watershed management plan prepared in 2012 for Bell Creek and Muddy Creek, outlining goals, BMPs, pollutants, and activities."
+  },
+  "goals": [
+    { "id": 1, "text": "Reduce sediment loading into Bell Creek by X% by year YYYY" },
+    { "id": 2, "text": "Improve aquatic habitat conditions and biodiversity in target areas" }
+  ],
+  "bmps": [
+    { "name": "Riparian buffer plantings", "location": "Bell Creek streambanks" },
+    { "name": "Nutrient management planning", "location": "Agricultural lands" }
+  ],
+  "pollutants": [
+    { "type": "Sediment", "unit": "tons/year", "baseline": 1234, "target": 987 },
+    { "type": "Nitrogen", "unit": "lbs/year", "baseline": 567, "target": 400 }
+  ],
+  "implementationActivities": [
+    { "task": "Stakeholder meetings with landowners", "status": "Planned" },
+    { "task": "Install riparian buffers", "status": "Ongoing" }
+  ],
+  "monitoringMetrics": [
+    { "metric": "Stream turbidity", "unit": "NTU", "baseline": 12, "target": 6 },
+    { "metric": "Macroinvertebrate diversity", "unit": "species count", "baseline": 10, "target": 20 }
+  ],
+  "outreachActivities": [
+    { "audience": "Local farmers", "activity": "Nutrient management workshops" },
+    { "audience": "Schools/community groups", "activity": "Watershed education programs" }
+  ],
+  "geographicAreas": [
+    { "region": "Bell Creek subwatershed", "coverage": "X acres" },
+    { "region": "Muddy Creek subwatershed", "coverage": "Y acres" }
+  ]
+}

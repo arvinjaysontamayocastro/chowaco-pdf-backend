@@ -33,6 +33,19 @@ create table if not exists question_embeddings (
   updated_at timestamptz not null default now(),
   primary key (key, model)
 );
+-- Enable once
+create extension if not exists "pgcrypto";
+
+-- Create table if you haven't yet
+create table if not exists public.openlinks (
+  guid         text        not null,
+  public_id    uuid        primary key default gen_random_uuid(),
+  meta_json    jsonb       not null,
+  payload_json jsonb       not null,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists idx_openlinks_guid on public.openlinks (guid);
 ```
 
 3. Add environment variables (local `.env` or Netlify environment variables):

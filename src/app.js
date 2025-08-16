@@ -8,6 +8,7 @@ const cors = require('cors');
 const uploadController = require('./controllers/uploadController');
 const askController = require('./controllers/askController');
 const deleteController = require('./controllers/deleteController');
+const openLinkController = require('./controllers/openLinkController');
 
 // const validate = require('./middleware/validate');
 
@@ -97,5 +98,8 @@ app.use(
 app.post('/api/upload', upload.single('pdf'), uploadController);
 app.post('/api/ask', askController);
 app.delete('/api/documents/:guid', deleteController);
+app.post('/api/openlinks', openLinkController.create);
+app.get('/api/openlinks/:publicId', openLinkController.getByPublicId);
+app.get('/api/openlinks', openLinkController.listByGuid);
 
 module.exports = app;

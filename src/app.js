@@ -5,6 +5,7 @@ const multer = require('multer');
 
 const cors = require('cors');
 
+const healthController = require('./controllers/healthController');
 const uploadController = require('./controllers/uploadController');
 const askController = require('./controllers/askController');
 const deleteController = require('./controllers/deleteController');
@@ -95,6 +96,7 @@ app.use(
   })
 );
 
+app.get('/api/health', healthController);
 app.post('/api/upload', upload.single('pdf'), uploadController);
 app.post('/api/ask', askController);
 app.delete('/api/documents/:guid', deleteController);

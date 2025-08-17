@@ -9,18 +9,10 @@ const { OpenAI } = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const { askWithRetry } = require('./llm');
 const { chunkWithOverlap } = require('../utils/chunker');
-const { mmr } = require('./rerank');
-const { anchorFor } = require('./fieldAnchors');
 
 const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || 'text-embedding-3-small';
 
 // -------- normalize input -> paragraphs --------
-async function buildQuestionEmbedding(key, basePrompt) {
-  const hint = anchorFor(key);
-  const q = hint ? `${basePrompt}\nHINT: ${hint}` : basePrompt;
-  const emb = await getEmbeddings(q);
-  return emb;
-}
 function toParagraphs(input) {
   if (typeof input === 'string') {
     return input.split(/\n\n+/);
@@ -63,41 +55,33 @@ async function getEmbeddings(textOrParsed) {
 
   return { chunks, embeddings };
 }
-function cosine(a, b) {
-  if (!Array.isArray(a) || !Array.isArray(b)) return 0;
+
+// -------- retrieval --------
+function cosineSimilarity(a, b) {
   let dot = 0,
     na = 0,
     nb = 0;
-  const len = Math.min(a.length, b.length);
-  for (let i = 0; i < len; i++) {
-    dot += a[i] * b[i];
-    na += a[i] * a[i];
-    nb += b[i] * b[i];
+  for (let i = 0; i < a.length; i++) {
+    const x = a[i] || 0;
+    const y = b[i] || 0;
+    dot += x * y;
+    na += x * x;
+    nb += y * y;
   }
-  if (!na || !nb) return 0;
-  return dot / (Math.sqrt(na) * Math.sqrt(nb));
+  return dot / (Math.sqrt(na) * Math.sqrt(nb) || 1e-12);
 }
 
 function searchChunks(
   questionEmbedding,
   documentEmbeddings,
   documentChunks,
-  topK = 5,
-  useMMR = true
+  topK = 5
 ) {
   const sims = documentEmbeddings.map((emb, i) => ({
     i,
-    score: cosine(questionEmbedding, emb),
+    score: cosineSimilarity(questionEmbedding, emb),
   }));
   sims.sort((a, b) => b.score - a.score);
-  if (useMMR) {
-    const items = sims.map((s) => ({
-      chunk: documentChunks[s.i],
-      embedding: documentEmbeddings[s.i],
-    }));
-    const picked = mmr(questionEmbedding, items, topK, 0.7);
-    return picked.map((p) => p.chunk);
-  }
   return sims.slice(0, topK).map((s) => documentChunks[s.i]);
 }
 
@@ -106,39 +90,16 @@ const askGPT = async (question, contextChunks, canonicalKey) => {
   return askWithRetry({ canonicalKey, question, context: contextChunks });
 };
 
-// Return both chunks and similarity scores for confidence calculations
-function searchWithScores(
-  questionEmbedding,
-  documentEmbeddings,
-  documentChunks,
-  topK = 8,
-  useMMR = true
-) {
-  const sims = documentEmbeddings.map((emb, i) => ({
-    i,
-    score: cosine(questionEmbedding, emb),
-  }));
-  sims.sort((a, b) => b.score - a.score);
-  if (useMMR) {
-    const items = sims.map((s) => ({
-      chunk: documentChunks[s.i],
-      embedding: documentEmbeddings[s.i],
-      i: s.i,
-      score: s.score,
-    }));
-    const picked = mmr(questionEmbedding, items, topK, 0.7);
-    const chunks = picked.map((p) => p.chunk);
-    const scores = picked.map((p) => ({ i: p.i, score: p.score }));
-    return { chunks, scores };
+
+async function buildQuestionEmbedding(key, basePrompt){
+  try {
+    const hint = anchorFor ? anchorFor(key) : "";
+    const q = hint ? `${basePrompt}\nHINT: ${hint}` : basePrompt;
+    const emb = await getEmbeddings(q);
+    return emb;
+  } catch (e) {
+    return await getEmbeddings(basePrompt);
   }
-  const top = sims.slice(0, topK);
-  return { chunks: top.map((s) => documentChunks[s.i]), scores: top };
 }
 
-module.exports = {
-  getEmbeddings,
-  searchChunks,
-  searchWithScores,
-  askGPT,
-  buildQuestionEmbedding,
-};
+module.exports = { getEmbeddings, searchChunks, askGPT };

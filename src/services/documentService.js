@@ -5,7 +5,11 @@ const {
   getQuestionEmbedding,
   questionQueries,
 } = require('../utils/extractText');
-const { searchChunks, askGPT } = require('../utils/rag');
+const {
+  searchChunks,
+  askGPT,
+  buildQuestionEmbedding,
+} = require('../utils/rag');
 const { parsePDF } = require('../utils/pdfUtils');
 
 async function processPDFAndStore(guid, pdfBuffer) {
@@ -27,10 +31,15 @@ async function getAnswerForGuid(guid, key) {
   if (!doc) throw new Error('Document not found');
   const chunks = doc.chunks;
   const embeddings = doc.embeddings;
-  const questionEmbedding = await (rag.buildQuestionEmbedding ? rag.buildQuestionEmbedding(key, questionQueries[key]) : getQuestionEmbedding(key));
-const topChunks = searchChunks(questionEmbedding, embeddings, chunks);
+  const questionEmbedding = await (buildQuestionEmbedding
+    ? buildQuestionEmbedding(key, questionQueries[key])
+    : getQuestionEmbedding(key));
+  const topChunks = searchChunks(questionEmbedding, embeddings, chunks);
   // Build sources with index + snippet
-  const sources = topChunks.map((t) => ({ snippet: t.slice(0, 400), index: chunks.indexOf(t) }));
+  const sources = topChunks.map((t) => ({
+    snippet: t.slice(0, 400),
+    index: chunks.indexOf(t),
+  }));
   const answer = await askGPT(questionQueries[key], topChunks, key);
   return { answer, sources };
 }

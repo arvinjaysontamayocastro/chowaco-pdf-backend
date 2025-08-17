@@ -53,9 +53,8 @@ module.exports.getByPublicId = async (req, res) => {
 
 module.exports.listByGuid = async (req, res) => {
   try {
-    const { guid } = req.query;
-    if (!guid) return res.status(400).json({ error: 'guid query is required' });
-    const arr = await openService.listOpenLinksByGuid(guid);
+    console.log('list');
+    const arr = await openService.listOpenLinks();
     return res.json(
       arr.map((row) => ({
         publicId: row.public_id,

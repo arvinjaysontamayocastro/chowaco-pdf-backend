@@ -21,11 +21,10 @@ async function getOpenLinkByPublicId(publicId) {
   return data;
 }
 
-async function listOpenLinksByGuid(guid) {
+async function listOpenLinks() {
   const { data, error } = await supabase
     .from('openlinks')
     .select('public_id, created_at, meta_json')
-    .eq('guid', guid)
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data || [];
@@ -34,5 +33,5 @@ async function listOpenLinksByGuid(guid) {
 module.exports = {
   createOpenLink,
   getOpenLinkByPublicId,
-  listOpenLinksByGuid,
+  listOpenLinks,
 };
